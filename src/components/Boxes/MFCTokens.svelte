@@ -44,8 +44,8 @@
   }
 
   .chart {
-    width: 150px;
-    height: 150px;
+    width: 300px;
+    height: 300px;
     margin-bottom: 1rem;
   }
 </style>

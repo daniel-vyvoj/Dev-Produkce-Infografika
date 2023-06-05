@@ -3,13 +3,15 @@
   import { getAuth } from 'firebase/auth';
   import { app } from '../firebase/Firebase';
   import { goto } from '$app/navigation';
+  import data from '../data.json';
+ 
 
   export let user: User | null;
-  let isLoading = true;
+  let isLoading: boolean = true;
 
   const auth = getAuth(app);
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     try {
       await auth.signOut();
       goto('/login');
@@ -27,6 +29,8 @@
       isLoading = false;
     }
   }
+
+  const memberCount = data.length;
 </script>
 
 {#if isLoading}
@@ -95,7 +99,7 @@
                 </span>
                 <span class="ml-2 text-sm tracking-wide truncate">Members</span>
                 <span class="px-2 py-0.5 ml-auto text-xs font-medium tracking-wide text-green-500 bg-green-50 rounded-full"
-                  >15</span
+                  >{memberCount}</span
                 >
               </a>
             </li>
