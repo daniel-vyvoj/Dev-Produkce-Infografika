@@ -17,6 +17,7 @@
 		"@playwright/test": "^1.28.1",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.5.0",
+		"@types/mysql": "^2.15.21",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
 		"autoprefixer": "^10.4.14",
@@ -37,6 +38,10 @@
 	"type": "module",
 	"dependencies": {
 		"chart.js": "^4.3.0",
-		"firebase": "^9.22.1"
+		"firebase": "^9.22.1",
+		"iconv-lite": "^0.6.3",
+		"mysql": "^2.18.1",
+		"mysql2": "^3.3.3",
+		"safer-buffer": "^2.1.2"
 	}
 }

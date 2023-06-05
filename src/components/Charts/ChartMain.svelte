@@ -7,7 +7,7 @@
     let timePeriod = 'monthly';
   
     function drawChart() {
-      const ctx = document.getElementById('chart') as HTMLCanvasElement;
+      const ctx = document.getElementById('chartmain') as HTMLCanvasElement;
       if (!ctx) return;
   
       const data: ChartData = {
@@ -70,7 +70,7 @@
   </script>
   
   <div class="my-4">
-    <canvas id="chart" width="400" height="80"></canvas>
+    <canvas id="chartmain" width="400" height="80"></canvas>
   </div>
   
   <div class="flex items-center justify-center my-2">

@@ -24,5 +24,7 @@
       <Tips />
     </div>
   </div>
+ 
   <ChartMain/>
   <MainTable/>
+  
