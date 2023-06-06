@@ -4,7 +4,8 @@
   import type {ChartData, ChartDataset, ChartOptions} from 'chart.js'
   import data from '../../data.json';
 
-  let chart: Chart;
+  let chart: Chart; 
+  
   let timePeriod: string = 'monthly';
 
   interface DataEntry {
@@ -28,9 +29,9 @@
       if (timePeriod === 'monthly') {
         chartData[monthIndex] += tokens;
       } else if (timePeriod === 'daily') {
-        chartData[monthIndex] += tokens / 31; // Assuming each month has 31 days
+        chartData[monthIndex] += tokens / 31; 
       } else if (timePeriod === 'weekly') {
-        chartData[monthIndex] += tokens / 4.33; // Assuming each month has an average of 4.33 weeks
+        chartData[monthIndex] += tokens / 4.33; 
       }
     });
 
