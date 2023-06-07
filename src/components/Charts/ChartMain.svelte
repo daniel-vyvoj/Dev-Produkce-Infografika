@@ -1,12 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Chart, registerables} from 'chart.js';
-  import type {ChartData, ChartDataset, ChartOptions} from 'chart.js'
+  import { Chart, registerables } from 'chart.js';
+  import type { ChartData, ChartDataset, ChartOptions } from 'chart.js';
   import data from '../../data.json';
 
-  let chart: Chart; 
-  
-  let timePeriod: string = 'monthly';
+  let chart: Chart;
+
+  let comparisonType: string = 'tokens';
+  let pastPeriod: string = 'weekly';
+  let currentPeriod: string = 'weekly';
 
   interface DataEntry {
     UID: string;
@@ -18,20 +20,21 @@
     notes: string;
   }
 
-  function processChartData(data: DataEntry[], timePeriod: string): number[] {
-    const months: string[] = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  function processChartData(data: DataEntry[], period: string): number[] {
     const chartData: number[] = Array(12).fill(0);
 
     data.forEach((entry) => {
       const monthIndex = new Date(entry.date).getMonth();
       const tokens = parseInt(entry.tokens);
 
-      if (timePeriod === 'monthly') {
+      if (period === 'monthly') {
         chartData[monthIndex] += tokens;
-      } else if (timePeriod === 'daily') {
-        chartData[monthIndex] += tokens / 31; 
-      } else if (timePeriod === 'weekly') {
-        chartData[monthIndex] += tokens / 4.33; 
+      } else if (period === 'daily') {
+        chartData[monthIndex] += tokens / 31;
+      } else if (period === 'weekly') {
+        chartData[monthIndex] += tokens / 4.33;
+      } else if (period === 'yearly') {
+        chartData[monthIndex] += tokens / 12;
       }
     });
 
@@ -42,10 +45,19 @@
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     datasets: [
       {
-        label: 'Period 1',
-        data: processChartData(data, timePeriod),
+        label: 'Past Period',
+        data: processChartData(data, pastPeriod),
         borderColor: 'rgba(255, 99, 132, 1)',
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        fill: false,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      },
+      {
+        label: 'Current Period',
+        data: processChartData(data, currentPeriod),
+        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
         fill: false,
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -64,13 +76,12 @@
   };
 
   function updateChart() {
-    chartData.datasets[0].data = processChartData(data, timePeriod);
+    chartData.datasets[0].data = processChartData(data, pastPeriod);
+    chartData.datasets[1].data = processChartData(data, currentPeriod);
     chart.update();
   }
 
-  function setChartTimePeriod(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    timePeriod = target.value;
+  function setChartParameters() {
     updateChart();
   }
 
@@ -93,10 +104,26 @@
 </div>
 
 <div class="flex items-center justify-center my-2">
-  <select class="p-2 border rounded-md" on:change={setChartTimePeriod}>
-    <option value="weekly">Weekly</option>
+  <select class="p-2 border rounded-md" bind:value={comparisonType} on:change={setChartParameters}>
+    <option value="tokens">Total Tokens</option>
+    <option value="users">Total Users</option>
+    <!-- Add more comparison options as needed -->
+  </select>
+
+  <select class="p-2 border rounded-md ml-2" bind:value={pastPeriod} on:change={setChartParameters}>
     <option value="daily">Daily</option>
+    <option value="weekly">Weekly</option>
     <option value="monthly">Monthly</option>
+    <option value="yearly">Yearly</option>
+    <!-- Add more period options as needed -->
+  </select>
+
+  <select class="p-2 border rounded-md ml-2" bind:value={currentPeriod} on:change={setChartParameters}>
+    <option value="daily">Daily</option>
+    <option value="weekly">Weekly</option>
+    <option value="monthly">Monthly</option>
+    <option value="yearly">Yearly</option>
+    <!-- Add more period options as needed -->
   </select>
 </div>
 
