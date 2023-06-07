@@ -7,7 +7,7 @@
   let chart: Chart<keyof ChartType, ChartData<keyof ChartType>, ChartConfiguration<keyof ChartType>> | undefined;
   let chartDrawn = false;
 
-  let tipData: { type: string; tokens: number; percentage: number }[] = [];
+  let tipData: { type: string; tokens: number; percentage: number; color: string }[] = [];
 
   onMount(() => {
     if (!chartDrawn) {
@@ -31,7 +31,8 @@
     tipData = tipTypes.map((type) => {
       const tokens = data.filter((item) => item.type === type).reduce((sum, item) => sum + parseInt(item.tokens), 0);
       const percentage = (tokens / totalEarnings) * 100;
-      return { type, tokens, percentage };
+      const color = getTipColor(type);
+      return { type, tokens, percentage, color };
     });
 
     tipData.sort((a, b) => b.percentage - a.percentage); // Sestupně podle podílu
@@ -50,7 +51,7 @@
         datasets: [
           {
             data: tipData.map((item) => item.tokens),
-            backgroundColor: ['purple', 'green', 'blue', 'orange', 'yellow', 'red'],
+            backgroundColor: tipData.map((item) => item.color),
           },
         ],
       },
@@ -58,8 +59,35 @@
         responsive: true,
         maintainAspectRatio: false,
         cutout: '80%',
+        plugins: {
+          legend: {
+            labels: {
+              pointStyle: 'circle',
+              usePointStyle: true,
+            },
+          },
+        },
       },
     });
+  }
+
+  function getTipColor(type: string): string {
+    switch (type) {
+      case 'MFC Share':
+        return 'green';
+      case 'Private':
+        return 'blue';
+      case 'Premium':
+        return 'orange';
+      case 'Tip':
+        return 'yellow';
+      case 'Voyeur':
+        return 'red';
+      case 'Group Show':
+        return 'black';
+      default:
+        return 'purple,';
+    }
   }
 </script>
 
@@ -84,35 +112,35 @@
   .tip-list {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    margin-top: 1rem;
   }
 
   .tip-item {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    padding: 0.5rem 1rem;
     margin-bottom: 0.5rem;
-    background-color: #f3f3f3;
-    border-radius: 4px;
   }
 
-  .tip-type {
-    font-weight: bold;
-    font-size: 1.2rem;
+  .tip-label {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+  }
+
+  .tip-label-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 0.25rem;
   }
 
   .tip-tokens {
-    font-size: 1rem;
-    color: #555;
-    margin-left: 0.5rem;
+    margin-right: 0.5rem;
   }
 
   .tip-percentage {
-    font-size: 1rem;
-    color: #555;
-    margin-left: 0.5rem;
+    color: #888;
   }
 </style>
 
@@ -124,7 +152,10 @@
   <div class="tip-list">
     {#each tipData as tip}
       <div class="tip-item">
-        <div class="tip-type">{tip.type}</div>
+        <div class="tip-label">
+          <span class="tip-label-dot" style="background-color: {tip.color};"></span>
+          {tip.type}
+        </div>
         <div class="tip-tokens">{tip.tokens.toLocaleString()}</div>
         <div class="tip-percentage">{tip.percentage.toFixed(2)}%</div>
       </div>
