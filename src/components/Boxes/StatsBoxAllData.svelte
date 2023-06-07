@@ -52,17 +52,43 @@
   </script>
   
   <style>
+    .flex {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+  
     .rectangle {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      width: 25%;
+      width: 23%;
       height: 200px;
       border: 1px solid #ccc;
       border-radius: 4px;
       margin: 1rem;
       padding: 1rem;
+    }
+  
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+  
+    .row p {
+      margin: 0;
+    }
+  
+    .number,
+    .date,
+    .nick {
+      margin-right: 0.5rem;
+    }
+  
+    .nick {
+      font-weight: bold;
     }
   </style>
   
@@ -74,20 +100,31 @@
     <div class="rectangle">
       <h2 class="text-xl font-semibold">Highest Tips</h2>
       {#each highestTips as tip}
-        <p>{tip.tokens} - {tip.date} - {tip.user}</p>
+        <div class="row">
+          <p class="number">{tip.tokens}</p>
+          <p class="date">{tip.date}</p>
+          <p class="nick">{tip.user}</p>
+        </div>
       {/each}
     </div>
     <div class="rectangle">
       <h2 class="text-xl font-semibold">Longest Pvts</h2>
       {#each longestPvts as pvt}
-        <p>{pvt.tokens.length} tokens - {pvt.date} - {pvt.user}</p>
+        <div class="row">
+          <p class="number">{pvt.tokens.length} tokens</p>
+          <p class="date">{pvt.date}</p>
+          <p class="nick">{pvt.user}</p>
+        </div>
       {/each}
     </div>
     <div class="rectangle">
       <h2 class="text-xl font-semibold">Best Spenders</h2>
       {#each bestSpenders as spender}
-        <p>{spender.count} - {spender.user}</p>
+        <div class="row">
+          <p class="number">{spender.count}</p>
+          <p class="date"></p>
+          <p class="nick">{spender.user}</p>
+        </div>
       {/each}
     </div>
   </div>
-  

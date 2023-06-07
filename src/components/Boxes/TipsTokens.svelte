@@ -61,10 +61,7 @@
         cutout: '80%',
         plugins: {
           legend: {
-            labels: {
-              pointStyle: 'circle',
-              usePointStyle: true,
-            },
+            display: false, // Skryje legendu
           },
         },
       },
