@@ -1,25 +1,41 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { afterUpdate } from 'svelte';
+
   import Chart from 'chart.js/auto';
+  import type { ChartConfiguration } from 'chart.js';
+
   import data from '../../data.json';
 
   let totalTokens = 0;
-  let chart;
+  let mfcTokens = 0;
+  let chart: Chart | null = null;
 
   onMount(() => {
-    // Výpočet celkového počtu tokenů
-    totalTokens = data.reduce((sum, item) => sum + parseInt(item.tokens), 0);
+    calculateTokenCounts();
+    createChart();
+  });
 
-    // Vytvoření grafu
-    const ctx = document.getElementById('mfcchart');
+  afterUpdate(() => {
+    calculateTokenCounts();
+    updateChart();
+  });
+
+  function calculateTokenCounts() {
+    totalTokens = data.reduce((sum, item) => sum + parseInt(item.tokens), 0);
+    mfcTokens = totalTokens;
+  }
+
+  function createChart() {
+    const ctx = document.getElementById('mfcchart') as HTMLCanvasElement;
     chart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['MFC Tokens', '?'],
+        labels: ['MFC Tokens'],
         datasets: [
           {
-            data: [totalTokens, 1000000 - totalTokens], // Přizpůsobte maximálnímu počtu tokenů
-            backgroundColor: ['blue', 'lightgray'],
+            data: [mfcTokens],
+            backgroundColor: ['blue'],
           },
         ],
       },
@@ -29,7 +45,14 @@
         cutout: '80%',
       },
     });
-  });
+  }
+
+  function updateChart() {
+    if (chart) {
+      chart.data.datasets[0].data = [mfcTokens];
+      chart.update();
+    }
+  }
 </script>
 
 <style>
@@ -52,10 +75,10 @@
 
 <div class="chart-container">
   <div class="chart">
-    <canvas id="mfcchart" />
+    <canvas id="mfcchart"></canvas>
   </div>
 
   <h2 class="text-xl font-semibold">%MFC Tokens</h2>
   <hr class="my-2 border border-gray-400">
-  <p>Total sum Tokens {totalTokens}</p>
+  <p>Total sum Tokens: {totalTokens}</p>
 </div>

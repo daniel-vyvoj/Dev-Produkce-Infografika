@@ -14,64 +14,70 @@
     notes: string;
   }
 
-  interface TopTipper {
-    label: string;
+  interface TipType {
     value: number;
+    count: number;
+    percentage: number;
   }
 
-  let topTippers: TopTipper[] = [];
+  let tipTypes: TipType[] = [];
 
   onMount(() => {
-    // Výpočet top tippers
-    const userTipMap: Map<string, number> = new Map();
+    const tipTypeMap: Map<number, number> = new Map();
 
     data.forEach((entry: Entry) => {
-      const { user, type } = entry;
+      const { type, tokens } = entry;
 
-      if (type === 'MFC Share') {
-        if (userTipMap.has(user)) {
-          const currentTips: number = userTipMap.get(user) || 0;
-          userTipMap.set(user, currentTips + 1);
+      if (type === 'Tip') {
+        const tipValue: number = parseInt(tokens);
+        if (tipTypeMap.has(tipValue)) {
+          const currentCount: number = tipTypeMap.get(tipValue) || 0;
+          tipTypeMap.set(tipValue, currentCount + 1);
         } else {
-          userTipMap.set(user, 1);
+          tipTypeMap.set(tipValue, 1);
         }
       }
     });
 
-    topTippers = Array.from(userTipMap)
-      .map(([user, tipCount]: [string, number]) => ({ label: user, value: tipCount }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 3); // Zobrazit pouze top 3 tippers
+    const totalTips: number = Array.from(tipTypeMap.values()).reduce((a, b) => a + b, 0);
 
-    // Vytvoření grafu pro top tippers
-    const tipperCtx: HTMLCanvasElement | null = document.getElementById('tipperChart') as HTMLCanvasElement;
-    if (tipperCtx) {
+    tipTypes = Array.from(tipTypeMap)
+      .map(([value, count]: [number, number]) => ({
+        value,
+        count,
+        percentage: (count / totalTips) * 100,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3); // Zobrazit pouze 3 nejlepší typy tipů
+
+    const tipChartCtx: HTMLCanvasElement | null = document.getElementById('tipChart') as HTMLCanvasElement;
+
+    if (tipChartCtx) {
       const chartConfig: ChartConfiguration = {
         type: 'doughnut',
         data: {
-          labels: topTippers.map(tipper => tipper.label),
+          labels: tipTypes.map((tipType) => `${tipType.value}tks`),
           datasets: [
             {
-              label: 'Top Tippers',
-              data: topTippers.map(tipper => tipper.value),
-              backgroundColor: ['green', 'orange', 'pink'],
+              data: tipTypes.map((tipType) => tipType.count),
+              backgroundColor: ['red', 'green', 'blue', 'orange'], // Upravit barvy podle potřeby
             },
           ],
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false,  
+          maintainAspectRatio: false,
           cutout: '80%',
         },
       };
 
-      new Chart(tipperCtx, chartConfig);
+      const chart = new Chart(tipChartCtx, chartConfig);
     }
   });
 </script>
 
 <style>
-  .spender-container {
+  .tip-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -81,21 +87,21 @@
     margin-bottom: 1rem;
   }
 
-  .spender-chart {
+  .tip-chart {
     width: 300px;
     height: 300px;
     margin-bottom: 1rem;
   }
 </style>
 
-<div class="spender-container">
-  <div class="spender-chart">
-    <canvas id="tipperChart" />
+<div class="tip-container">
+  <div class="tip-chart">
+    <canvas id="tipChart" />
   </div>
 
-  <h2 class="text-xl font-semibold">Top Tippers (Count)</h2>
+  <h2 class="text-xl font-semibold">Tip Types</h2>
   <hr class="my-2 border border-gray-400">
-  {#each topTippers as tipper}
-    <p>{tipper.label}: {tipper.value}</p>
+  {#each tipTypes as tipType}
+    <p>{tipType.value}tks - {tipType.count} - {tipType.percentage.toFixed(2)}%</p>
   {/each}
 </div>

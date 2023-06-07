@@ -7,6 +7,7 @@
     import EditData from "../../components/Boxes/EditData.svelte";
 	import ChartMain from "../../components/Charts/ChartMain.svelte";
 	import MainTable from "../../components/Tables/MainTable.svelte";
+	import StatsBoxAllData from "../../components/Boxes/StatsBoxAllData.svelte";
 </script>
 
 <EditData />
@@ -24,7 +25,7 @@
       <Tips />
     </div>
   </div>
- 
+  <StatsBoxAllData/>
   <ChartMain/>
   <MainTable/>
   

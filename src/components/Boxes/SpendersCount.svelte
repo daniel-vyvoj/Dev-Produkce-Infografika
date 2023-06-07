@@ -18,22 +18,30 @@
       }
     });
 
-    spenders = Array.from(userTokenMap)
-      .map(([user, tokens]) => ({ label: user, value: tokens }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 3); // Zobrazit pouze top 5 utrát
+    const spenderCounts = Array.from(userTokenMap.values());
+    const uniqueSpenders = Array.from(userTokenMap.keys()).length;
+    const thresholds = [50000, 100000, 150000, 200000];
+    const spenderData = [];
+    let previousThreshold = 0;
+
+    for (const threshold of thresholds) {
+      const spenderCount = spenderCounts.filter(tokens => tokens > previousThreshold && tokens <= threshold).length;
+      const percentage = (spenderCount / uniqueSpenders) * 100;
+      spenderData.push({ threshold, spenderCount, percentage });
+      previousThreshold = threshold;
+    }
 
     // Vytvoření grafu
     const ctx = document.getElementById('spenderChart');
     new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: spenders.map(spender => spender.label),
+        labels: spenderData.map(data => `${previousThreshold + 1}-${data.threshold}`),
         datasets: [
           {
             label: 'Spenders',
-            data: spenders.map(spender => spender.value),
-            backgroundColor: ['blue', 'purple', 'red'],
+            data: spenderData.map(data => data.spenderCount),
+            backgroundColor: ['blue', 'purple', 'red', 'green'],
           },
         ],
       },
@@ -43,6 +51,8 @@
         cutout: '80%',
       },
     });
+
+    spenders = spenderData;
   });
 </script>
 
@@ -69,9 +79,9 @@
     <canvas id="spenderChart" />
   </div>
 
-  <h2 class="text-xl font-semibold">Spenders (Count%)</h2>
+  <h2 class="text-xl font-semibold">Spenders (Count %)</h2>
   <hr class="my-2 border border-gray-400">
   {#each spenders as spender}
-    <p>{spender.label}: {spender.value}</p>
+    <p>{spender.threshold}: {spender.spenderCount} ({spender.percentage.toFixed(2)}%)</p>
   {/each}
 </div>
