@@ -29,9 +29,9 @@
   
       // Find longest pvts
       longestPvts = data
-        .filter((entry) => entry.type === 'private')
-        .sort((a, b) => b.tokens.length - a.tokens.length)
-        .slice(0, 3);
+  .filter((entry) => entry.type === 'private' || entry.type === 'Private') // Přidáme další možné hodnoty typu pvts
+  .sort((a, b) => b.tokens.length - a.tokens.length)
+  .slice(0, 3);
   
       // Find best spenders
       const spendersMap: Map<string, number> = new Map();
