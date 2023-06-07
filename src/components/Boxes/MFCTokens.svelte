@@ -43,6 +43,24 @@
         responsive: true,
         maintainAspectRatio: false,
         cutout: '80%',
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            enabled: false,
+          },
+          datalabels: {
+            display: true,
+            color: 'blue',
+            textAlign: 'center',
+            font: {
+              weight: 'bold',
+              size: 16,
+            },
+            formatter: (value) => value.toLocaleString(),
+          },
+        },
       },
     });
   }
@@ -67,7 +85,8 @@
   }
 
   .chart {
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
     height: 300px;
     margin-bottom: 1rem;
   }
@@ -81,4 +100,5 @@
   <h2 class="text-xl font-semibold">%MFC Tokens</h2>
   <hr class="my-2 border border-gray-400">
   <p>Total sum Tokens: {totalTokens}</p>
+  <p>MFC Tokens: {mfcTokens}</p>
 </div>

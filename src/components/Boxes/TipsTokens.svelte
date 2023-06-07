@@ -33,6 +33,8 @@
       const percentage = (tokens / totalEarnings) * 100;
       return { type, tokens, percentage };
     });
+
+    tipData.sort((a, b) => b.percentage - a.percentage); // Sestupně podle podílu
   }
 
   function drawChart() {
@@ -73,9 +75,44 @@
   }
 
   .chart {
-    width: 300px;
+    width: 100%;
+    max-width: 300px;
     height: 300px;
     margin-bottom: 1rem;
+  }
+
+  .tip-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tip-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    background-color: #f3f3f3;
+    border-radius: 4px;
+  }
+
+  .tip-type {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  .tip-tokens {
+    font-size: 1rem;
+    color: #555;
+    margin-left: 0.5rem;
+  }
+
+  .tip-percentage {
+    font-size: 1rem;
+    color: #555;
+    margin-left: 0.5rem;
   }
 </style>
 
@@ -84,11 +121,13 @@
     <canvas id="tipschart" />
   </div>
 
-  <h2 class="text-lg font-semibold">Tips</h2>
-  <hr class="my-2 border border-gray-400">
-  {#each tipData as tip}
-    <li>
-      {tip.type} - {tip.tokens} tokens - {tip.percentage.toFixed(2)}%
-    </li>
-  {/each}
+  <div class="tip-list">
+    {#each tipData as tip}
+      <div class="tip-item">
+        <div class="tip-type">{tip.type}</div>
+        <div class="tip-tokens">{tip.tokens.toLocaleString()}</div>
+        <div class="tip-percentage">{tip.percentage.toFixed(2)}%</div>
+      </div>
+    {/each}
+  </div>
 </div>
