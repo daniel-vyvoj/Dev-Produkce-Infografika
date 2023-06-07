@@ -3,6 +3,7 @@
   import { afterUpdate } from 'svelte';
 
   import Chart from 'chart.js/auto';
+  import 'chartjs-plugin-datalabels';
   import type { ChartConfiguration } from 'chart.js';
 
   import data from '../../data.json';
@@ -34,8 +35,9 @@
         labels: ['MFC Tokens'],
         datasets: [
           {
-            data: [mfcTokens],
-            backgroundColor: ['blue'],
+            data: [mfcTokens, totalTokens - mfcTokens],
+            backgroundColor: ['blue', 'transparent'],
+            borderWidth: 0,
           },
         ],
       },
@@ -52,13 +54,15 @@
           },
           datalabels: {
             display: true,
-            color: 'blue',
-            textAlign: 'center',
+            color: 'white',
             font: {
               weight: 'bold',
-              size: 16,
+              size: 24,
             },
             formatter: (value) => value.toLocaleString(),
+            anchor: 'center',
+            align: 'center',
+            offset: -10,
           },
         },
       },
@@ -67,7 +71,7 @@
 
   function updateChart() {
     if (chart) {
-      chart.data.datasets[0].data = [mfcTokens];
+      chart.data.datasets[0].data = [mfcTokens, totalTokens - mfcTokens];
       chart.update();
     }
   }
@@ -85,6 +89,7 @@
   }
 
   .chart {
+    position: relative;
     width: 100%;
     max-width: 300px;
     height: 300px;
@@ -95,10 +100,6 @@
 <div class="chart-container">
   <div class="chart">
     <canvas id="mfcchart"></canvas>
+    <div class="chart-label">SUM TKS</div>
   </div>
-
-  <h2 class="text-xl font-semibold">%MFC Tokens</h2>
-  <hr class="my-2 border border-gray-400">
-  <p>Total sum Tokens: {totalTokens}</p>
-  <p>MFC Tokens: {mfcTokens}</p>
 </div>
